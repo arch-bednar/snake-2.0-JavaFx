@@ -1,22 +1,22 @@
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.scene.canvas.GraphicsContext;
 import java.util.Random;
 
 public class Food extends Vector{
 
-    private Color color;
-    private double pixels = 10;
+    /*
+        Food class based on vector
+     */
 
- /*   Food(double x, double y){
-        super(x,y);
-    }
-*/
+    private Color color; //food color
+    private double pixels = 10; //each bound of food
+
     Food(){
-        setRandomColor();
-        setPosition(400, 400);
+        setRandomColor(); //set random color
+        setPosition(400, 400);  //set position
     }
 
+    //set random color
     public void setRandomColor(){
         Random generator = new Random();
         Color clr = null;
@@ -46,22 +46,27 @@ public class Food extends Vector{
             clr=Color.LIME;
         }
 
-        this.color=clr;
+        //this.color=clr;
+        setColor(clr);
     }
 
+    //set Color
     public void setColor(Color color){
         this.color=color;
     }
 
+    //get color
     public Color getColor(){
         return color;
     }
 
+    //draw food with GraphicsContext from canvas
     public void drawFood(GraphicsContext gc){
         gc.setFill(getColor());
         gc.fillRect(getX(), getY(), pixels, pixels);
     }
 
+    //clear last food position
     public void clearFood(GraphicsContext gc){
         gc.setFill(Color.LIGHTGREEN);
         gc.fillRect(getX(), getY(), pixels, pixels);

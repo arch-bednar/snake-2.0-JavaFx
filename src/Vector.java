@@ -1,5 +1,10 @@
 public class Vector {
 
+    /*
+        based class for food and snake's body
+        it's like Point from awt
+     */
+
     private double x, y;
 
     Vector(double x, double y){

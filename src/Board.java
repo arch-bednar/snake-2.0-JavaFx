@@ -12,29 +12,30 @@ import javafx.scene.text.FontWeight;
 
 public class Board extends Canvas implements Engine, Direction{
 
-    private double width, height;
-    private int pixels;
-    private GraphicsContext graphicsContext;
-    private AnimationTimer animationTimer;
-    private long lastTime=0;
-    private int score=0;
-    private boolean dead;
-    private boolean flag = true;
-    private Frame frame;
+    private double width, height;   //bounds
+    private int pixels; //pixels
+    private GraphicsContext graphicsContext;    //graphicsContext
+    private AnimationTimer animationTimer;  //animation timer
+    private long lastTime=0;    //last time
+    private int score=0;    //score
+    private boolean dead; //if is dead flag
+    private boolean flag = true; //pause flag
+    private Frame frame; //frame
 
     Board(double width ,double height){
         super(width, height);
 
-        graphicsContext = this.getGraphicsContext2D();
+        graphicsContext = this.getGraphicsContext2D(); //get graphicscontext from canvas
         setFocusTraversable(true);
-        this.pixels = 10;
-        this.width = width;
-        this.height = height;
-        snake.setBounds((int) width - pixels, (int) height - pixels);
+        this.pixels = 10;   //set pixels of entity = 10 like food or any part of snake
+        this.width = width; //set width of board
+        this.height = height;   //set height of board
+        snake.setBounds((int) width - pixels, (int) height - pixels); //set bounds of board
         setKeys();
         draw();
     }
 
+    //initial drawning
     public void draw(){
         refresh();
         drawSnake();
@@ -42,14 +43,17 @@ public class Board extends Canvas implements Engine, Direction{
         drawPause();
     }
 
+    //draw snake
     private void drawSnake(){
         snake.drawSnake(graphicsContext);
     }
 
+    //draw food
     private void drawFood(){
         food.drawFood(graphicsContext);
     }
 
+    //refresh whole board (after pause)
     private void refresh(){
         for(int row=0; row<width; row=row+pixels){
             for(int col=0; col<height; col=col+pixels){
@@ -64,33 +68,36 @@ public class Board extends Canvas implements Engine, Direction{
         }
     }
 
+    //set animation timer for speed of animation
     public void setTimer() {
         animationTimer = new AnimationTimer(){
             @Override
             public void handle(long now){
-                if(lastTime == 0){
+                if(lastTime == 0){ //if last time = 0 then set last time to current handle time (in nanoseconds)
                     lastTime = now;
                     return;
                 }else{
+                    //if current time - last time is greater than 1s (1_000_000_000.0 nano sec) divided by pixels (10)
                     if(now - lastTime > 1_000_000_000.0/pixels){
                         //refresh();
-                        food.drawFood(graphicsContext);
-                        dead = snake.move();
-                        snake.clearLast(graphicsContext);
+                        food.drawFood(graphicsContext); //draw food
+                        dead = snake.move();    //move snake and check if is dead
+                        snake.clearLast(graphicsContext);   //clear last position of snakes tail instead refreshing whole board
 
-                        if(snake.isEaten(food)){
-                            snake.grow();
-                            setFood();
-                            score++;
-                            frame.setScore(score);
-                            frame.setColor(food.getColor());
+                        if(snake.isEaten(food)){    //do if when food is eaten
+                            snake.grow();           //grow snake
+                            setFood();              //set food location and color
+                            score++;                //incrementation of score
+                            frame.setScore(score);  //set score number in frame
+                            frame.setColor(food.getColor());    //set food color in frame
                         }
-                        snake.drawSnake(graphicsContext);
-                        lastTime=now;
+                        snake.drawSnake(graphicsContext);   //draw snake
+                        lastTime=now;   //set last time to current time
 
-                        if(dead){
-                            animationTimer.stop();
-                            snake.drawDeadHead(graphicsContext);
+                        if(dead){   //if is dead then stop animation
+                            animationTimer.stop(); //stop animation
+                            snake.drawDeadHead(graphicsContext);    //draw collision
+                            drawGameOver();
                         }
                     }
                 }
@@ -98,61 +105,71 @@ public class Board extends Canvas implements Engine, Direction{
         };
     }
 
+    //set key event when key is pressed
     public void setKeys(){
         this.setOnKeyPressed(new EventHandler<KeyEvent>(){
             @Override
             public void handle(KeyEvent event){
 
-                if(event.getCode() == KeyCode.LEFT){
+                if(event.getCode() == KeyCode.LEFT){        //if left arrow then change head direction
 
-                    if(snake.getDirection() != Line.RIGHT){
+                    if(snake.getDirection() != Line.RIGHT){ //cannot change direction to opposite direction
                         snake.setDirection(Line.LEFT);
                     }
-                }else if(event.getCode() == KeyCode.RIGHT){
+                }else if(event.getCode() == KeyCode.RIGHT){ //if right arrow then change head direction
 
-                    if(snake.getDirection() != Line.LEFT){
+                    if(snake.getDirection() != Line.LEFT){  //cannot change direction to opposite direction
                         snake.setDirection(Line.RIGHT);
                     }
-                }else if(event.getCode() == KeyCode.UP){
+                }else if(event.getCode() == KeyCode.UP){    //if up arrow then change head direction
 
-                    if(snake.getDirection() != Line.DOWN){
+                    if(snake.getDirection() != Line.DOWN){  //cannot change direction to opposite direction
                         snake.setDirection(Line.UP);
                     }
-                }else if(event.getCode() == KeyCode.DOWN){
+                }else if(event.getCode() == KeyCode.DOWN){  //if down arrow then change head direction
 
-                    if(snake.getDirection() != Line.UP){
+                    if(snake.getDirection() != Line.UP){    //cannot change direction to opposite direction
                         snake.setDirection(Line.DOWN);
                     }
-                }else if(event.getCode() ==  KeyCode.ESCAPE){
-                    if(flag == false){
-                        animationTimer.stop();
+                }else if(event.getCode() ==  KeyCode.ESCAPE){//if esc button then pause or continue/start game
+                    if(flag == false && dead == false){ //if not pause
+                        animationTimer.stop(); //stop snake animation
                         drawPause();
                         flag=true;
-                    }else{
+                    }else if(flag == true && dead == false){ //if pause
                         refresh();
-                        animationTimer.start();
+                        animationTimer.start(); //start snake animation
                         flag=false;
                     }
-
                 }
 
-                System.out.println(snake.getDirection());
+                //System.out.println(snake.getDirection());
             }
         });
     }
 
+    //draw pause text
     public void drawPause(){
         graphicsContext.setFill(Color.BLUE);
         graphicsContext.setFont(Font.font("Verdana", FontWeight.BOLD, 36));
         graphicsContext.fillText("Press ESC key to start", 80, 100);
     }
 
+    //draw game over
+    public void drawGameOver(){
+        graphicsContext.setFill(Color.RED);
+        graphicsContext.setFont(Font.font("Verdana", FontWeight.BOLD, 36));
+        graphicsContext.fillText("Game Over!", 180, 100);
+    }
+
+    //set food location, color and clear last food position
     public void setFood(){
         food.clearFood(graphicsContext);
         food.setRandomColor();
         setFoodLocation();
     }
 
+    //set food position
     private void setFoodLocation(){
         int x, y;
         Random generator = new Random();
@@ -165,7 +182,10 @@ public class Board extends Canvas implements Engine, Direction{
         food.setRandomColor();
     }
 
+    //check if random food position is correct
     public boolean isCorrect(int x, int y){
+
+        //check if new food position is not in snake body
         LinkedList<Vector> tempBody = snake.getBody();
 
         for(Vector c: tempBody){
@@ -174,6 +194,7 @@ public class Board extends Canvas implements Engine, Direction{
             }
         }
 
+        //check if food position is not in board border
         if(x<=10){
             return false;
         }
@@ -185,6 +206,7 @@ public class Board extends Canvas implements Engine, Direction{
         return true;
     }
 
+    //set Frame (BorderPane) for easy access to setScore and setFood
     public void setFrame(Frame frame){
         this.frame=frame;
     }

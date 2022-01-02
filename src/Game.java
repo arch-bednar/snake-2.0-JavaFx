@@ -4,6 +4,10 @@ import javafx.scene.Scene;
 
 public class Game extends Application{
 
+    /*
+        Main class of application
+     */
+
     public static void main(String[] args){
         launch(args);
     }
