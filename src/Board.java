@@ -12,9 +12,9 @@ import javafx.scene.text.FontWeight;
 
 public class Board extends Canvas implements Engine, Direction{
 
-    private double width, height;   //bounds
-    private int pixels; //pixels
-    private GraphicsContext graphicsContext;    //graphicsContext
+    private final double width, height;   //bounds
+    private final int pixels; //pixels
+    private final GraphicsContext graphicsContext;    //graphicsContext
     private AnimationTimer animationTimer;  //animation timer
     private long lastTime=0;    //last time
     private int score=0;    //score
@@ -59,11 +59,10 @@ public class Board extends Canvas implements Engine, Direction{
             for(int col=0; col<height; col=col+pixels){
                 if(row <= 10 || row >= width-pixels*2 || col <= 10 || col >= height-pixels*2){
                     graphicsContext.setFill(Color.BLACK);
-                    graphicsContext.fillRect(row, col, pixels, pixels);
                 }else{
                     graphicsContext.setFill(Color.LIGHTGREEN);
-                    graphicsContext.fillRect(row, col, pixels, pixels);
                 }
+                graphicsContext.fillRect(row, col, pixels, pixels);
             }
         }
     }
@@ -75,7 +74,6 @@ public class Board extends Canvas implements Engine, Direction{
             public void handle(long now){
                 if(lastTime == 0){ //if last time = 0 then set last time to current handle time (in nanoseconds)
                     lastTime = now;
-                    return;
                 }else{
                     //if current time - last time is greater than 1s (1_000_000_000.0 nano sec) divided by pixels (10)
                     if(now - lastTime > 1_000_000_000.0/pixels){
