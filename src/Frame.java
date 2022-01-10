@@ -13,7 +13,7 @@ public class Frame extends BorderPane{
         Frame inherited from BrderPane
      */
 
-    Board board;    //Canvas - main game stage
+    JCanvas board;    //Canvas - main game stage
     Pane scorePane; //Pane with current score and food color
     Text scoreText; //Text with score number
 
@@ -59,7 +59,7 @@ public class Frame extends BorderPane{
 
     //make Canvas - main game stage
     private void makeBoard(){
-        board = new Board(600, 600);
+        board = new JCanvas(600, 600);
         board.setTimer();
         board.setFrame(this);
         this.setCenter(board);

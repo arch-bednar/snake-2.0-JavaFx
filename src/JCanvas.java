@@ -10,7 +10,7 @@ import java.util.Random;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
-public class Board extends Canvas implements Engine, Direction{
+public class JCanvas extends Canvas implements Engine, Direction{
 
     private final double width, height;   //bounds
     private final int pixels; //pixels
@@ -22,7 +22,7 @@ public class Board extends Canvas implements Engine, Direction{
     private boolean flag = true; //pause flag
     private Frame frame; //frame
 
-    Board(double width ,double height){
+    JCanvas(double width ,double height){
         super(width, height);
 
         graphicsContext = this.getGraphicsContext2D(); //get graphicscontext from canvas
@@ -55,16 +55,21 @@ public class Board extends Canvas implements Engine, Direction{
 
     //refresh whole board (after pause)
     private void refresh(){
-        for(int row=0; row<width; row=row+pixels){
-            for(int col=0; col<height; col=col+pixels){
-                if(row <= 10 || row >= width-pixels*2 || col <= 10 || col >= height-pixels*2){
-                    graphicsContext.setFill(Color.BLACK);
-                }else{
-                    graphicsContext.setFill(Color.LIGHTGREEN);
-                }
-                graphicsContext.fillRect(row, col, pixels, pixels);
-            }
-        }
+//        for(int row=0; row<width; row=row+pixels){
+//            for(int col=0; col<height; col=col+pixels){
+//                if(row <= 10 || row >= width-pixels*2 || col <= 10 || col >= height-pixels*2){
+//                    graphicsContext.setFill(Color.BLACK);
+//                }else{
+//                    graphicsContext.setFill(Color.LIGHTGREEN);
+//                }
+//                graphicsContext.fillRect(row, col, pixels, pixels);
+//            }
+//        }
+        graphicsContext.setFill(Color.BLACK);
+        graphicsContext.fillRect(0,0,width, height);
+
+        graphicsContext.setFill(Color.LIGHTGREEN);
+        graphicsContext.fillRect(pixels*2, pixels*2, width-pixels*4, height-pixels*4);
     }
 
     //set animation timer for speed of animation
